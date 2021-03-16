@@ -48,8 +48,8 @@ if "QYWX_APP" in os.environ and os.environ["QYWX_APP"]:
     QYWX_APP = os.environ["QYWX_APP"]
 if "PUSH_PLUS_TOKEN" in os.environ and os.environ["PUSH_PLUS_TOKEN"]:
     PUSH_PLUS_TOKEN = os.environ["PUSH_PLUS_TOKEN"]
-    if "PUSH_PLUS_USER" in os.environ["PUSH_PLUS_USER"]:
-        PUSH_PLUS_USER = os.environ["PUSH_PLUS_USER"]
+if "PUSH_PLUS_USER" in os.environ["PUSH_PLUS_USER"]:
+    PUSH_PLUS_USER = os.environ["PUSH_PLUS_USER"]
 
 
 if BARK:
@@ -71,6 +71,24 @@ if PUSH_PLUS_TOKEN:
     notify_mode.append('pushplus')
     print("pushplus 推送打开")
 
+def pushplus(title, content):
+    print("\n")
+    if not PUSH_PLUS_TOKEN:
+        print("PushPlus的token未设置!!\n取消推送")
+        return
+    print("PushPlus推送启动")
+    if PUSH_PLUS_USER:
+        response = requests.post(
+            f"http://pushplus.hxtrip.com/send?token={PUSH_PLUS_TOKEN}&title={title}&content={content}&template=html&topic={PUSH_PLUS_USER}").json()
+    else:
+        response = requests.post(
+            f"http://pushplus.hxtrip.com/send?token={PUSH_PLUS_TOKEN}&title={title}&content={content}&template=html").json()
+    if response['code'] == 200:
+        print('推送成功！')
+    else:
+        print('推送失败！')
+        
+        
 def bark(title, content):
     print("\n")
     if not BARK:
@@ -222,22 +240,7 @@ def qywxapp_bot(title, content):
     else:
         print('推送失败！')
 
-def pushplus(title, content):
-    print("\n")
-    if not PUSH_PLUS_TOKEN:
-        print("PushPlus的token未设置!!\n取消推送")
-        return
-    print("PushPlus推送启动")
-    if PUSH_PLUS_USER:
-        response = requests.post(
-            f"http://pushplus.hxtrip.com/send?token={PUSH_PLUS_TOKEN}&title={title}&content={content}&template=html&topic={PUSH_PLUS_USER}").json()
-    else:
-        response = requests.post(
-            f"http://pushplus.hxtrip.com/send?token={PUSH_PLUS_TOKEN}&title={title}&content={content}&template=html").json()
-    if response['code'] == 200:
-        print('推送成功！')
-    else:
-        print('推送失败！')
+
 
 def change_user_id(desp):
     qywx_app_params = QYWX_APP.split(',')
